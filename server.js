@@ -11,8 +11,8 @@ simpsons.forEach((item, index) => {
 app.use(express.static("public"));
 
 //handle requests for dynamic data
-app.get("/quotes", (request, response) => {
-  const { count = 1, character } = request.query;
+app.get("/quotes/:count/:character", (request, response) => {
+  const { count = 1, character } = request.params;
 
   //convert url count to a number
   let countAsNumber = Number(count);

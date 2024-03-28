@@ -1,5 +1,7 @@
 const express = require("express");
 const app = express();
+const cors = require("cors");
+app.use(cors()); //slides in a few weeks about this
 
 //users state
 const users = [];

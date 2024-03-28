@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const sha256 = require("sha256");
 const { salt } = require("../secrets");
+const { getUser, getUserIndexOfById } = require("../utils");
 
 router.post("/", (req, res) => {
   let { users, body, lastUserId } = req;
@@ -13,9 +14,7 @@ router.post("/", (req, res) => {
 
   password = sha256(password + salt);
 
-  const user = users.find((user) => {
-    return user.email === email && user.password === password;
-  });
+  const user = getUser(users, email, password);
 
   if (user) {
     res.send({ status: 0, reason: "Duplicate account" });
@@ -43,9 +42,7 @@ router.patch("/:id", (req, res) => {
     return;
   }
 
-  const indexOf = users.findIndex((user) => {
-    return user.id === id;
-  });
+  const indexOf = getUserIndexOfById(users, id);
 
   if (indexOf === -1) {
     res.send({ status: 0, reason: "User not found, check the id" });
@@ -77,9 +74,7 @@ router.get("/:id", (req, res) => {
     return;
   }
 
-  const indexOf = users.findIndex((user) => {
-    return user.id === id;
-  });
+  const indexOf = getUserIndexOfById(users, id);
 
   if (indexOf === -1) {
     res.send({ status: 0, reason: "User not found, check the id" });
@@ -100,9 +95,7 @@ router.delete("/:id", (req, res) => {
     return;
   }
 
-  const indexOf = users.findIndex((user) => {
-    return user.id === id;
-  });
+  const indexOf = getUserIndexOfById(users, id);
 
   if (indexOf === -1) {
     res.send({ status: 0, reason: "User not found, check the id" });

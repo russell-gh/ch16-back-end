@@ -3,12 +3,14 @@ const app = express();
 
 //users state
 const users = [];
+let lastUserId = { value: 1000 };
 
 app.use(express.json());
 
 //middleware that adds the users array to the request
 app.use(function (req, res, next) {
   req.users = users;
+  req.lastUserId = lastUserId;
   next();
 });
 

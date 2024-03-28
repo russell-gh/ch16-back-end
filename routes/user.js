@@ -31,17 +31,42 @@ router.get("/", (req, res) => {
   res.send(req.users);
 });
 
-router.delete("/:id", (req, res) => {
-  const { id } = req.params;
+router.get("/:id", (req, res) => {
+  let { id } = req.params;
   const { users } = req;
 
-  if (!id || Number.isNaN(Number(id))) {
+  id = Number(id);
+
+  if (!id || Number.isNaN(id)) {
     res.send({ status: 0, reason: "Missing or invalid ID" });
     return;
   }
 
   const indexOf = users.findIndex((user) => {
-    return user.id === Number(id);
+    return user.id === id;
+  });
+
+  if (indexOf === -1) {
+    res.send({ status: 0, reason: "User not found, check the id" });
+  }
+
+  //the magic
+  res.send({ status: 1, user: users[indexOf] });
+});
+
+router.delete("/:id", (req, res) => {
+  let { id } = req.params;
+  const { users } = req;
+
+  id = Number(id);
+
+  if (!id || Number.isNaN(id)) {
+    res.send({ status: 0, reason: "Missing or invalid ID" });
+    return;
+  }
+
+  const indexOf = users.findIndex((user) => {
+    return user.id === id;
   });
 
   if (indexOf === -1) {

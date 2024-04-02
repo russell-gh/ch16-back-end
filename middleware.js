@@ -17,7 +17,10 @@ function checkIsUser(req, res, next) {
 
 function checkToken(req, res, next) {
   const user = req.users.find((user) => {
-    return user.token === Number(req.headers.token);
+    console.log(user.token);
+    return user.token.includes(req.headers.token);
+
+    //user.token === Number(req.headers.token);
   });
 
   if (user) {

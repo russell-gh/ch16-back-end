@@ -10,8 +10,16 @@ function getUserIndexOfById(users, id) {
   });
 }
 
-function getRandom() {
-  return Math.floor(Math.random() * 100000000000000000);
+function getRandom(len = 32) {
+  let uniqueId = "";
+  let chars = "ABCDEFGHIJUKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz";
+  let charsLength = chars.length;
+
+  for (let i = 0; i < len; i++) {
+    uniqueId += chars.charAt(Math.floor(Math.random() * charsLength));
+  }
+
+  return (uniqueId += Date.now());
 }
 
 module.exports = { getUser, getUserIndexOfById, getRandom };

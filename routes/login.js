@@ -20,7 +20,7 @@ router.post("/", (req, res) => {
   }
 
   const token = getRandom();
-  user.token = token;
+  user.token ? user.token.push(token) : (user.token = [token]);
   res.send({ status: 1, token });
 });
 

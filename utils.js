@@ -10,4 +10,8 @@ function getUserIndexOfById(users, id) {
   });
 }
 
-module.exports = { getUser, getUserIndexOfById };
+function getRandom() {
+  return Math.floor(Math.random() * 100000000000000000);
+}
+
+module.exports = { getUser, getUserIndexOfById, getRandom };

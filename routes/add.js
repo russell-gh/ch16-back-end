@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const sha256 = require("sha256");
 const { salt } = require("../secrets");
-const { getUser, getUserIndexOfById } = require("../utils");
+const { getUser, getUserIndexOfById, getRandom } = require("../utils");
 
 router.post("/", (req, res) => {
   let { users, body, lastUserId } = req;
@@ -23,8 +23,19 @@ router.post("/", (req, res) => {
 
   //do the magic - make it look like loads of customers
   lastUserId.value += Math.floor(Math.random() * 9) + 1;
-  req.users.push({ email, password, id: lastUserId.value });
-  res.send({ status: 1, id: lastUserId.value });
+
+  //why not login at the same time
+  const token = getRandom();
+
+  const newUser = {
+    email,
+    password,
+    id: lastUserId.value,
+    token: [{ token, issueDate: Date.now() }],
+  };
+
+  req.users.push(newUser);
+  res.send({ status: 1, id: lastUserId.value, token });
 });
 
 module.exports = router;

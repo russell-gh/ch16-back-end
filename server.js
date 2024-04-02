@@ -27,3 +27,14 @@ const PORT = process.env.PORT || 6001;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
+//clean up
+setInterval(() => {
+  users.forEach((user) => {
+    user.token.forEach((token) => {
+      if (token.issueDate + 86400000 < Date.now()) {
+        delete token.token;
+      }
+    });
+  });
+}, 300000);

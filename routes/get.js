@@ -5,6 +5,7 @@ const { salt } = require("../secrets");
 const { getUser, getUserIndexOfById } = require("../utils");
 const { checkIsUser, checkToken } = require("../middleware");
 
+//MUST be removed before deployment
 router.get("/", (req, res) => {
   res.send(req.users);
 });

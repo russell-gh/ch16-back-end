@@ -4,13 +4,12 @@ const sha256 = require("sha256");
 const { salt } = require("../secrets");
 const { getUser, getUserIndexOfById } = require("../utils");
 const { checkToken } = require("../middleware");
+const asyncMySQL = require("../mysql/driver");
+const { deleteUser } = require("../mysql/queries");
 
-router.delete("/:id", checkToken, (req, res) => {
-  console.log(req.authedUser);
-  delete req.authedUser.email;
-  delete req.authedUser.id;
-  delete req.authedUser.token;
-  delete req.authedUser.password;
+router.delete("/:id", async (req, res) => {
+  await asyncMySQL(deleteUser(req.headers.token));
+
   res.send({ status: 1 });
 });
 

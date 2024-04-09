@@ -1,33 +1,10 @@
-const { getUserIndexOfById } = require("./utils");
+const asyncMySQL = require("./mysql/driver");
+const { checkToken } = require("./mysql/queries");
 
-function checkIsUser(req, res, next) {
-  const user = req.users.find((user) => {
-    return req.body.email === user.email;
-  });
+async function checkIsUser(req, res, next) {
+  const results = await asyncMySQL(checkToken(req.headers.token));
 
-  if (!user) {
-    console.log("User NOT found, quitting");
-    res.send({ status: 0, reason: "User unknown" });
-    return;
-  }
-
-  console.log("User found, carry on");
-  next();
-}
-
-function checkToken(req, res, next) {
-  const user = req.users.find((user) => {
-    console.log(user.token);
-
-    return user.token.find((token) => {
-      return token.token === req.headers.token;
-    });
-
-    //user.token === Number(req.headers.token);
-  });
-
-  if (user) {
-    req.authedUser = user;
+  if (results.length) {
     next();
     return;
   }

@@ -3,25 +3,30 @@ const router = express.Router();
 const { salt } = require("../secrets");
 const sha256 = require("sha256");
 const { getRandom } = require("../utils");
+const asyncMySQL = require("../mysql/driver");
 
-router.post("/", (req, res) => {
-  const { users } = req;
-  const { email, password } = req.body;
+router.post("/", async (req, res) => {
+  let { email, password } = req.body;
 
-  const user = users.find((user) => {
-    return user.email === email && user.password === sha256(password + salt);
-  });
+  password = sha256(password + salt);
 
-  if (!user) {
-    res.send({ status: 0, reason: "User/password combo was not found!" });
+  const results = await asyncMySQL(`SELECT * FROM users
+                                      WHERE email LIKE "${email}" 
+                                        AND password LIKE "${password}";`);
+
+  if (results.length > 0) {
+    const token = getRandom();
+
+    await asyncMySQL(`INSERT INTO sessions
+                          (user_id, token)
+                             VALUES
+                               (${results[0].id}, "${token}");`);
+
+    res.send({ status: 1, token });
     return;
   }
 
-  const token = getRandom();
-  user.token
-    ? user.token.push({ token, issueDate: Date.now() })
-    : (user.token = [{ token, issueDate: Date.now() }]);
-  res.send({ status: 1, token });
+  res.send({ status: 0, reason: "Bad creds!" });
 });
 
 module.exports = router;

@@ -2,11 +2,12 @@ const express = require("express");
 const router = express.Router();
 const sha256 = require("sha256");
 const { salt } = require("../secrets");
-const { getUser, getUserIndexOfById, getRandom } = require("../utils");
+const { getRandom } = require("../utils");
+const asyncMySQL = require("../mysql/driver");
+const { addUser, addToken } = require("../mysql/queries");
 
-router.post("/", (req, res) => {
-  let { users, body, lastUserId } = req;
-  let { email, password } = body;
+router.post("/", async (req, res) => {
+  let { email, password } = req.body;
 
   if (!email || !password) {
     res.send({ status: 0, reason: "Missing data" });
@@ -14,28 +15,19 @@ router.post("/", (req, res) => {
 
   password = sha256(password + salt);
 
-  const user = getUser(users, email, password);
-
-  if (user) {
-    res.send({ status: 0, reason: "Duplicate account" });
-    return;
-  }
-
-  //do the magic - make it look like loads of customers
-  lastUserId.value += Math.floor(Math.random() * 9) + 1;
-
   //why not login at the same time
   const token = getRandom();
 
-  const newUser = {
-    email,
-    password,
-    id: lastUserId.value,
-    token: [{ token, issueDate: Date.now() }],
-  };
+  try {
+    const result = await asyncMySQL(addUser(email, password));
 
-  req.users.push(newUser);
-  res.send({ status: 1, id: lastUserId.value, token });
+    await asyncMySQL(addToken(result.insertId, token));
+
+    res.send({ status: 1, token });
+  } catch (e) {
+    console.log(e);
+    res.send({ status: 0, reason: "Duplicate users" });
+  }
 });
 
 module.exports = router;

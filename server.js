@@ -11,7 +11,7 @@ const limiterConfig = rateLimit({
   //legacyHeaders: false, // Disable the `X-RateLimit-*` headers.
   // store: ... , // Redis, Memcached, etc. See below.
 });
-app.use(limiterConfig);
+// app.use(limiterConfig);
 //rate limiter
 
 app.use(cors()); //slides in a few weeks about this

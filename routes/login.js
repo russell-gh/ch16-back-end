@@ -5,13 +5,11 @@ const sha256 = require("sha256");
 const { getRandom } = require("../utils");
 
 router.post("/", (req, res) => {
-  console.log(req.body);
+  const { users } = req;
+  const { email, password } = req.body;
 
-  const user = req.users.find((user) => {
-    return (
-      user.email === req.body.email &&
-      user.password === sha256(req.body.password + salt)
-    );
+  const user = users.find((user) => {
+    return user.email === email && user.password === sha256(password + salt);
   });
 
   if (!user) {

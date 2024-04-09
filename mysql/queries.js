@@ -37,6 +37,13 @@ function checkToken(token) {
                         WHERE token LIKE "${token}";`;
 }
 
+function getUser(token) {
+  return `SELECT *
+            FROM users
+                JOIN sessions ON users.id = sessions.user_id
+                    WHERE token LIKE "${token}";`;
+}
+
 module.exports = {
   addUser,
   addToken,
@@ -44,4 +51,5 @@ module.exports = {
   deleteUser,
   updateUser,
   checkToken,
+  getUser,
 };

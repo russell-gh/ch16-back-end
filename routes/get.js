@@ -2,17 +2,16 @@ const express = require("express");
 const router = express.Router();
 const sha256 = require("sha256");
 const { salt } = require("../secrets");
-const { getUser, getUserIndexOfById } = require("../utils");
-const { checkIsUser, checkToken } = require("../middleware");
+const { checkIsUser } = require("../middleware");
+const asyncMySQL = require("../mysql/driver");
+const { getUser } = require("../mysql/queries");
 
-//MUST be removed before deployment
-router.get("/", (req, res) => {
-  res.send(req.users);
-});
+router.get("/:id", checkIsUser, async (req, res) => {
+  console.log("Here");
+  const results = await asyncMySQL(getUser(req.headers.token));
 
-router.get("/:id", checkToken, (req, res) => {
   //the magic
-  res.send({ status: 1, user: req.authedUser });
+  res.send({ status: 1, user: results[0] });
 });
 
 module.exports = router;

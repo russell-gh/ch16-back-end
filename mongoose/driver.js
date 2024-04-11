@@ -1,63 +1,74 @@
+//Get Mongoose
 const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+mongoose.connect("mongodb://127.0.0.1:27017", {
+  useNewUrlParser: false,
+});
 
-const connect = async () => {
-  try {
-    const connection = await mongoose.connect(`mongodb://127.0.0.1:27017`, {
-      useNewUrlParser: false,
-    });
+const db = mongoose.connection;
 
-    mongoose.connection.on("error", (err) => {
-      console.log(err);
-    });
+db.on("error", console.error.bind(console, "connection error:"));
+db.once("open", function () {
+  console.log("Mongoose Connection Success");
+});
 
-    //////////////////////
-    //////////////////////
-    //////////////////////
-    //////////////////////
+module.exports = db;
 
-    const personSchema = new Schema({
-      name: String,
-      age: Number,
-      location: String,
-      isHappy: Boolean,
-    });
+// const mongoose = require("mongoose");
 
-    const Person = mongoose.model("Person", personSchema);
+// let connection;
 
-    //delete
-    // const result = await Person.deleteMany({ name: "Bobby" });
-    // console.log(result);
+// const connect = async () => {
+//   try {
+//     connection = await mongoose.connect(`mongodb://127.0.0.1:27017`, {
+//       useNewUrlParser: false,
+//     });
 
-    //update
-    // const result = await Person.findOneAndUpdate(
-    //   { name: "Bob" },
-    //   { name: "Bobby" }
-    // );
+//     mongoose.connection.on("error", (err) => {
+//       console.log(err);
+//     });
+//   } catch (e) {
+//     console.log("Are you sure MongoDB is running", e);
+//   }
+// };
 
-    // console.log(result);
+// connect();
 
-    //read
-    // const person = await Person.find({ name: "Bob" });
-    // console.log(person);
+// module.exports = connection;
 
-    //create
-    // const bob = new Person({
-    //   name: "Bob",
-    //   age: 30,
-    //   isHappy: true,
-    //   location: "London",
-    // });
+//////////////////////
+//////////////////////
+//////////////////////
+//////////////////////
 
-    // bob.save();
+// const Person = mongoose.model("Person", personSchema);
 
-    //////////////////////
-    //////////////////////
-    //////////////////////
-    //////////////////////
-  } catch (e) {
-    console.log("Are you sure MongoDB is running", e);
-  }
-};
+//delete
+// const result = await Person.deleteMany({ name: "Bobby" });
+// console.log(result);
 
-connect();
+//update
+// const result = await Person.findOneAndUpdate(
+//   { name: "Bob" },
+//   { name: "Bobby" }
+// );
+
+// console.log(result);
+
+//read
+// const person = await Person.find({ name: "Bob" });
+// console.log(person);
+
+//create
+// const bob = new Person({
+//   name: "Bob",
+//   age: 30,
+//   isHappy: true,
+//   location: "London",
+// });
+
+// bob.save();
+
+//////////////////////
+//////////////////////
+//////////////////////
+//////////////////////

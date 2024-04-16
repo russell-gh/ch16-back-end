@@ -4,17 +4,30 @@ const { salt } = require("../secrets");
 const sha256 = require("sha256");
 const { getRandom } = require("../utils");
 const asyncMySQL = require("../mysql/driver");
+const chalk = require("chalk");
 
 router.post("/", async (req, res) => {
   let { email, password } = req.body;
 
+  console.log(chalk.red("req.body:", JSON.stringify(req.body)));
+
   password = sha256(password + salt);
 
-  const results = await asyncMySQL(`SELECT * FROM users
-                                      WHERE email LIKE "${email}" 
-                                        AND password LIKE "${password}";`);
+  console.log(chalk.yellow("sha256 password:", password));
 
-  if (results.length > 0) {
+  const sql = `SELECT * FROM users
+                WHERE email LIKE ? 
+                  AND password LIKE ?;`;
+
+  const results = await asyncMySQL(sql, [email, password]);
+
+  console.log(chalk.green("query:", sql));
+
+  console.log(
+    chalk.whiteBright("results: ", results.length, JSON.stringify(results))
+  );
+
+  if (results.length === 1) {
     const token = getRandom();
 
     await asyncMySQL(`INSERT INTO sessions

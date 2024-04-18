@@ -9,8 +9,6 @@ const chalk = require("chalk");
 router.post("/", async (req, res) => {
   let { email, password } = req.body;
 
-  console.log(chalk.red("req.body:", JSON.stringify(req.body)));
-
   password = sha256(password + salt);
 
   console.log(chalk.yellow("sha256 password:", password));
@@ -21,12 +19,6 @@ router.post("/", async (req, res) => {
 
   const results = await asyncMySQL(sql, [email, password]);
 
-  console.log(chalk.green("query:", sql));
-
-  console.log(
-    chalk.whiteBright("results: ", results.length, JSON.stringify(results))
-  );
-
   if (results.length === 1) {
     const token = getRandom();
 
@@ -35,6 +27,7 @@ router.post("/", async (req, res) => {
                              VALUES
                                (${results[0].id}, "${token}");`);
 
+    res.cookie("token", "hello world");
     res.send({ status: 1, token });
     return;
   }

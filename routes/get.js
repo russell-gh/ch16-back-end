@@ -7,6 +7,8 @@ const asyncMySQL = require("../mysql/driver");
 const { getUser } = require("../mysql/queries");
 
 router.get("/:id", checkIsUser, async (req, res) => {
+  console.log(req.cookies);
+
   const results = await asyncMySQL(getUser(req.headers.token));
 
   //the magic

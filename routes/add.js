@@ -5,6 +5,10 @@ const { salt } = require("../secrets");
 const { getRandom } = require("../utils");
 const asyncMySQL = require("../mysql/driver");
 const { addUser, addToken } = require("../mysql/queries");
+// const { sendEmail } = require("../email/sib");
+const { sendEmail } = require("../email/nodemailer");
+
+const { welcomeEmail } = require("../email/templates");
 
 router.post("/", async (req, res) => {
   let { email, password } = req.body;
@@ -22,6 +26,9 @@ router.post("/", async (req, res) => {
     const result = await asyncMySQL(addUser(email, password));
 
     await asyncMySQL(addToken(result.insertId, token));
+
+    //send a welcome email
+    sendEmail(welcomeEmail(email), undefined, [{ email, name: "Russell" }]);
 
     res.send({ status: 1, token });
   } catch (e) {

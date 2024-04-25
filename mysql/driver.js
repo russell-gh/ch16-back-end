@@ -1,10 +1,16 @@
 const mysql = require("mysql");
 
+// const connection = mysql.createConnection({
+//   host: "localhost",
+//   user: "root",
+//   password: "",
+//   database: "russells-movie",
+// });
 const connection = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "",
-  database: "russells-movie",
+  host: "russell-movie-database.uk",
+  user: "russellm_russells-movie-database",
+  password: "Qio8G((mpceq",
+  database: "russellm_russells-movie-database",
 });
 
 connection.connect();

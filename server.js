@@ -3,6 +3,7 @@ const app = express();
 const cors = require("cors");
 const { rateLimit } = require("express-rate-limit");
 const cookieParser = require("cookie-parser");
+const helmet = require("helmet");
 
 //rate limiter
 const limiterConfig = rateLimit({
@@ -14,6 +15,8 @@ const limiterConfig = rateLimit({
 });
 app.use(limiterConfig);
 //rate limiter
+
+app.use(helmet());
 
 app.use(cookieParser());
 

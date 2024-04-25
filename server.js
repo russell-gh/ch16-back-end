@@ -1,9 +1,12 @@
+require("dotenv").config();
 const express = require("express");
 const app = express();
 const cors = require("cors");
 const { rateLimit } = require("express-rate-limit");
 const cookieParser = require("cookie-parser");
 const helmet = require("helmet");
+
+console.log(process.env);
 
 //rate limiter
 const limiterConfig = rateLimit({

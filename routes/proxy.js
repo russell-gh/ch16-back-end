@@ -43,7 +43,7 @@ router.get("/:searchTerm", async (req, res) => {
     res.send(data);
   } catch (e) {
     console.log(e);
-    res.send({ status: 0, reason: e });
+    res.send({ status: 0 });
   }
 });
 

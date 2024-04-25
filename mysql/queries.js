@@ -30,11 +30,11 @@ function updateUser(key, value, token) {
                         WHERE sessions.token LIKE "${token}";`;
 }
 
-function checkToken(token) {
+function checkToken() {
   return `SELECT users.id
                 FROM users
                     JOIN sessions ON users.id = sessions.user_id
-                        WHERE token LIKE "${token}";`;
+                        WHERE token LIKE ?;`;
 }
 
 function getUser(token) {

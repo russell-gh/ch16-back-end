@@ -1,54 +1,35 @@
 const express = require("express");
 const app = express();
-const simpsons = require("./simpsons.json");
+const cors = require("cors");
+const { rateLimit } = require("express-rate-limit");
+const cookieParser = require("cookie-parser");
+const helmet = require("helmet");
 
-//add an id to each character
-simpsons.forEach((item, index) => {
-  item.id = index + 1;
+//rate limiter
+const limiterConfig = rateLimit({
+  windowMs: 10000, // 15 minutes
+  limit: 500, // Limit each IP to 100 requests per `window` (here, per 15 minutes).
+  //standardHeaders: "draft-7", // draft-6: `RateLimit-*` headers; draft-7: combined `RateLimit` header
+  //legacyHeaders: false, // Disable the `X-RateLimit-*` headers.
+  // store: ... , // Redis, Memcached, etc. See below.
 });
+app.use(limiterConfig);
+//rate limiter
 
-//handle request to static files
-app.use(express.static("public"));
+app.use(helmet());
 
-//handle requests for dynamic data
-app.get("/quotes/:count/:character", (request, response) => {
-  const { count = 1, character } = request.params;
+app.use(cookieParser());
 
-  //convert url count to a number
-  let countAsNumber = Number(count);
+app.use(cors()); //slides in a few weeks about this
+app.use(express.json());
 
-  //if not a number, replace with 1
-  if (Number.isNaN(countAsNumber) || count < 1) {
-    response.send("Sorry, you did not enter a number, or an invalid number");
-    // return;
-  }
-
-  //check enough results
-  if (countAsNumber > simpsons.length) {
-    response.send("You asked for too much data");
-    // return;
-  }
-
-  //passed all validation
-
-  let copy = [...simpsons];
-
-  //random the array
-  copy.sort(() => {
-    return 0.5 - Math.random();
-  });
-
-  if (character) {
-    copy = copy.filter((char) => {
-      return char.character.toLowerCase().includes(character.toLowerCase());
-    });
-  }
-
-  //check that the user does not want more than on offer
-  copy.length = countAsNumber > copy.length ? copy.length : countAsNumber;
-
-  response.send(copy);
-});
+app.use("/user/get", require("./routes/get"));
+app.use("/user/add", require("./routes/add"));
+app.use("/user/delete", require("./routes/delete"));
+app.use("/user/update", require("./routes/update"));
+app.use("/user/login", require("./routes/login"));
+app.use("/user/logout", require("./routes/logout"));
+app.use("/proxy", require("./routes/proxy"));
 
 const PORT = process.env.PORT || 6001;
 app.listen(PORT, () => {
